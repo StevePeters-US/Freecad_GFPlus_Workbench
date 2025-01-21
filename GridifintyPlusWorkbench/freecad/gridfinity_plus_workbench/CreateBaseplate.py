@@ -50,26 +50,37 @@ class CreateBaseplate:
             print("Failed to set up the baseplate document.")
             return
         
-        spreadsheet = baseplate_doc.getObject("Spreadsheet")
-        if spreadsheet:
-            try:
-                spreadsheet.set("SizeX", str(NumX))
-                spreadsheet.set("SizeY", str(NumY))
-                baseplate_doc.recompute()
-            except Exception as e:
-                print(f"Error setting spreadsheet parameters: {e}")
-        
-        feature_name = 'Cut'
+        feature_name = 'MainShape'
         baseplate_feature = baseplate_doc.getObject(feature_name)
         
         if not baseplate_feature:
             print(f"No feature named '{feature_name}' found in the baseplate document.")
             return
 
-        new_baseplate_body = doc.addObject('Part::Feature', 'ImportedBaseplate')
-        new_baseplate_body.Shape = baseplate_feature.Shape
-        view_object = new_baseplate_body.ViewObject
-        view_object.ShapeColor = (0.25, 0.25, 0.25)
+  
+        
+        # for x in range(NumX):
+        #     for y in range(NumY):
+        #         new_body = doc.addObject('Part::Feature', f'ImportedBaseplate_{x}_{y}')
+        #         print(f"New body '{new_body.Name}' created at position ({x}, {y}).")
+
+        #         new_body.Shape = baseplate_feature.Shape
+                
+        #         center = FreeCAD.Vector(-20.75, 0, 0) 
+        #         pos = new_body.Placement.Base + FreeCAD.Vector(x * 42, y * 42, 0) - center
+        #         rot = new_body.Placement.Rotation.multiply(FreeCAD.Rotation(FreeCAD.Vector(0, 1, 0), slice * 90))
+        #         # Apply the new placement with the rotation and the correct center
+        #         new_body.Placement = FreeCAD.Placement(pos + center, rot, center)
+
+        #         view_object = new_body.ViewObject
+        #         view_object.ShapeColor = (0.25, 0.25, 0.25)
+
+        # # Combine all instances using a boolean union
+        # combined_shape = baseplate_instances[0]
+        # for inst in baseplate_instances[1:]:
+        #     combined_shape = combined_shape.fuse(inst)
+
+        #     new_body.Shape = inst.copy()
 
         doc.recompute()
         
