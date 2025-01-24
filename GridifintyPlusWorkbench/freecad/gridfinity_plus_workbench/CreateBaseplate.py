@@ -50,7 +50,7 @@ class CreateBaseplate:
             print("Failed to set up the baseplate document.")
             return
         
-        feature_name = 'MainShape'
+        feature_name = 'Body'
         baseplate_feature = baseplate_doc.getObject(feature_name)
         
         if not baseplate_feature:
@@ -59,28 +59,37 @@ class CreateBaseplate:
 
   
         
-        # for x in range(NumX):
-        #     for y in range(NumY):
-        #         new_body = doc.addObject('Part::Feature', f'ImportedBaseplate_{x}_{y}')
-        #         print(f"New body '{new_body.Name}' created at position ({x}, {y}).")
+        shapes_for_fusion = []
 
-        #         new_body.Shape = baseplate_feature.Shape
+        for x in range(NumX):
+            for y in range(NumY):
+                new_body = doc.addObject('Part::Feature', f'ImportedBaseplate_{x}_{y}')
+                print(f"New body '{new_body.Name}' created at position ({x}, {y}).")
+
+                new_body.Shape = baseplate_feature.Shape
                 
-        #         center = FreeCAD.Vector(-20.75, 0, 0) 
-        #         pos = new_body.Placement.Base + FreeCAD.Vector(x * 42, y * 42, 0) - center
-        #         rot = new_body.Placement.Rotation.multiply(FreeCAD.Rotation(FreeCAD.Vector(0, 1, 0), slice * 90))
-        #         # Apply the new placement with the rotation and the correct center
-        #         new_body.Placement = FreeCAD.Placement(pos + center, rot, center)
+                center = FreeCAD.Vector(-20.75, 0, 0) 
+                pos = new_body.Placement.Base + FreeCAD.Vector(x * 42, y * 42, 0) - center
+                #rot = new_body.Placement.Rotation.multiply(FreeCAD.Rotation(FreeCAD.Vector(0, 1, 0), slice * 90))
+                # Apply the new placement with the rotation and the correct center
+                new_body.Placement.Base = pos
+                new_body.Placement = FreeCAD.Placement(pos + center, FreeCAD.Rotation(FreeCAD.Vector(0, 0, 0), center))
 
-        #         view_object = new_body.ViewObject
-        #         view_object.ShapeColor = (0.25, 0.25, 0.25)
+                view_object = new_body.ViewObject
+                view_object.ShapeColor = (0.25, 0.25, 0.25)
 
-        # # Combine all instances using a boolean union
-        # combined_shape = baseplate_instances[0]
-        # for inst in baseplate_instances[1:]:
-        #     combined_shape = combined_shape.fuse(inst)
+                shapes_for_fusion.append(new_body.Shape)
+        
+       
 
-        #     new_body.Shape = inst.copy()
+        # compound = Part.makeCompound(shapes_for_fusion)
+
+        # fusion = doc.addObject('Part::Feature', f'Baseplate_{NumX}_{NumY}')
+        # fusion.Shape = compound
+
+        # view_object = fusion.ViewObject
+        # view_object.ShapeColor = (0.0, 0.88, 0.11)
+
 
         doc.recompute()
         
