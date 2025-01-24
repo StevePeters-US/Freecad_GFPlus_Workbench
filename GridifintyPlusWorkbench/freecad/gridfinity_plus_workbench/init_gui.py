@@ -1,7 +1,7 @@
 import os
 import FreeCADGui as Gui
 import FreeCAD as App
-from freecad.gridfinity_plus_workbench import CreateBaseplate, CreateBin, CreateTabs, BinFusion 
+from freecad.gridfinity_plus_workbench import CreateBaseplate, CreateBin 
 
 translate=App.Qt.translate
 QT_TRANSLATE_NOOP=App.Qt.QT_TRANSLATE_NOOP
@@ -35,7 +35,7 @@ class GridifintyPlusWorkbench(Gui.Workbench):
             "Log",
             "Switching to gridfinity_plus_workbench") + "\n")
         
-        self.list = ["CreateBaseplateCommand", "CreateTabsCommand", "CreateBinCommand", "BinFusionTool"] # a list of command names created in the line above
+        self.list = ["CreateBaseplateCommand", "CreateBinCommand"] # a list of command names created in the line above
         self.appendToolbar("Gridfinity+ tools", self.list) # creates a new toolbar with your commands
         self.appendMenu("My New Menu", self.list) # creates a new menu
         self.appendMenu(["An existing Menu", "My submenu"], self.list) # appends a submenu to an existing menu
