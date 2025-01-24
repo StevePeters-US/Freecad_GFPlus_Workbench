@@ -1,7 +1,6 @@
 import FreeCAD, FreeCADGui, Part, Sketcher
 from PySide import QtGui, QtCore
 import os
-import math
 from freecad.gridfinity_plus_workbench.CreateBinTaskPanel import BinTaskPanel
 
 ICONPATH = os.path.join(os.path.dirname(__file__), "resources//icons//")
@@ -27,7 +26,7 @@ class CreateBin:
         self.taskPanel = BinTaskPanel(self)
         FreeCADGui.Control.showDialog(self.taskPanel)
 
-    def perform_fusion(self):
+    def perform_fusion(self, NumX, NumY):
         doc = FreeCAD.ActiveDocument
         all_objects = doc.Objects
 
@@ -64,7 +63,7 @@ class CreateBin:
         compound = Part.makeCompound(shapes_for_fusion)
 
         # Create a new object to hold the fused shape
-        fusion = doc.addObject("Part::Feature", "BinFusion")
+        fusion = doc.addObject("Part::Feature", f"GFPlus_Bin_{NumX}_{NumY}")
         fusion.Shape = compound
 
         view_object = fusion.ViewObject
@@ -268,7 +267,7 @@ class CreateBin:
         # Close the stored documents after copying
         FreeCAD.closeDocument(bin_doc.Name)
 
-        self.perform_fusion()
+        self.perform_fusion(NumX, NumY)
 
         doc.recompute()
         
@@ -276,4 +275,3 @@ class CreateBin:
 
 
 FreeCADGui.addCommand('CreateBinCommand', CreateBin())
-
