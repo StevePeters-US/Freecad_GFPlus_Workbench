@@ -70,5 +70,4 @@ def CreateBin(numX, numY, selection, height):
 
 FreeCADGui.addCommand('CreateBin', CommandCreateBin())
 
-# # To open the task panel, execute the command:
-# FreeCADGui.runCommand('CreateBin')
+
