@@ -23,6 +23,13 @@ class BinTaskPanel:
         self.numYInput.setValue(1)
         self.layout.addWidget(self.numYInput)
 
+        # Enum input
+        self.labelEnum = QtGui.QLabel("Selection:")
+        self.layout.addWidget(self.labelEnum)
+        self.enumInput = QtGui.QComboBox()
+        self.enumInput.addItems(["edges", "corners", "fill", "none"])
+        self.layout.addWidget(self.enumInput)
+
         # Height input
         self.labelHeight = QtGui.QLabel("Height:")
         self.layout.addWidget(self.labelHeight)
@@ -42,8 +49,9 @@ class BinTaskPanel:
     def CreateBin(self):
         numX = self.numXInput.value()
         numY = self.numYInput.value()
+        selection = self.enumInput.currentText()
         height = self.heightInput.value()
-        self.command.CreateBin(numX, numY, height)
+        self.command.CreateBin(numX, numY, selection, height)
 
 class CommandCreateBin:
     def GetResources(self):
@@ -57,10 +65,9 @@ class CommandCreateBin:
     def Activated(self):
         FreeCADGui.Control.showDialog(BinTaskPanel(self))
 
-def CreateBin(numX, numY, height):
-    print(f"Creating bin with NumX: {numX}, NumY: {numY}, Height: {height}")
+def CreateBin(numX, numY, selection, height):
+    print(f"Creating bin with NumX: {numX}, NumY: {numY}, Selection: {selection}, Height: {height}")
 
 FreeCADGui.addCommand('CreateBin', CommandCreateBin())
 
-# To open the task panel, execute the command:
-FreeCADGui.runCommand('CreateBin')
+
