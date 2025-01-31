@@ -7,21 +7,29 @@ class BinTaskPanel:
         self.form = QtGui.QWidget()
         self.layout = QtGui.QVBoxLayout()
 
-        # NumX input
-        self.labelNumX = QtGui.QLabel("NumX:")
-        self.layout.addWidget(self.labelNumX)
-        self.numXInput = QtGui.QSpinBox()
-        self.numXInput.setMinimum(1)
-        self.numXInput.setValue(1)
-        self.layout.addWidget(self.numXInput)
+        # NumX range input
+        self.labelNumXRange = QtGui.QLabel("NumX Range:")
+        self.layout.addWidget(self.labelNumXRange)
+        self.numXMinInput = QtGui.QSpinBox()
+        self.numXMinInput.setMinimum(1)
+        self.numXMinInput.setValue(1)
+        self.layout.addWidget(self.numXMinInput)
+        self.numXMaxInput = QtGui.QSpinBox()
+        self.numXMaxInput.setMinimum(1)
+        self.numXMaxInput.setValue(1)
+        self.layout.addWidget(self.numXMaxInput)
 
-        # NumY input
-        self.labelNumY = QtGui.QLabel("NumY:")
-        self.layout.addWidget(self.labelNumY)
-        self.numYInput = QtGui.QSpinBox()
-        self.numYInput.setMinimum(1)
-        self.numYInput.setValue(1)
-        self.layout.addWidget(self.numYInput)
+        # NumY range input
+        self.labelNumYRange = QtGui.QLabel("NumY Range:")
+        self.layout.addWidget(self.labelNumYRange)
+        self.numYMinInput = QtGui.QSpinBox()
+        self.numYMinInput.setMinimum(1)
+        self.numYMinInput.setValue(1)
+        self.layout.addWidget(self.numYMinInput)
+        self.numYMaxInput = QtGui.QSpinBox()
+        self.numYMaxInput.setMinimum(1)
+        self.numYMaxInput.setValue(1)
+        self.layout.addWidget(self.numYMaxInput)
 
         # Enum input
         self.labelEnum = QtGui.QLabel("Selection:")
@@ -47,11 +55,17 @@ class BinTaskPanel:
         self.form.setLayout(self.layout)
 
     def CreateBin(self):
-        numX = self.numXInput.value()
-        numY = self.numYInput.value()
+        numXMin = self.numXMinInput.value()
+        numXMax = self.numXMaxInput.value()
+        numYMin = self.numYMinInput.value()
+        numYMax = self.numYMaxInput.value()
         selection = self.enumInput.currentText()
         height = self.heightInput.value()
-        self.command.CreateBin(numX, numY, selection, height)
+        
+        for numX in range(numXMin, numXMax + 1):
+            for numY in range(numYMin, numYMax + 1):
+                self.command.CreateBin(numX, numY, selection, height)
+
 
 class CommandCreateBin:
     def GetResources(self):
