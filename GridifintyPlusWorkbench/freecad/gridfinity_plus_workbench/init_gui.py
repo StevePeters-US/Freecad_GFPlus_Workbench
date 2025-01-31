@@ -18,7 +18,7 @@ class GridifintyPlusWorkbench(Gui.Workbench):
     class which gets initiated at startup of the gui
     """
     MenuText = translate("Workbench", "GridifintyPlusWorkbench")
-    ToolTip = translate("Workbench", "a simple GridifintyPlusWorkbench")
+    ToolTip = translate("Workbench", "GridifintyPlusWorkbench")
     Icon = os.path.join(ICONPATH, "layout-grid-line.svg")
     toolbox = []
 
@@ -37,8 +37,7 @@ class GridifintyPlusWorkbench(Gui.Workbench):
         
         self.list = ["CreateBaseplateCommand", "CreateBinCommand"] # a list of command names created in the line above
         self.appendToolbar("Gridfinity+ tools", self.list) # creates a new toolbar with your commands
-        self.appendMenu("My New Menu", self.list) # creates a new menu
-        self.appendMenu(["An existing Menu", "My submenu"], self.list) # appends a submenu to an existing menu
+        self.appendMenu("Gridfintiy+", self.list) # creates a new menu
 
     def Activated(self):
         '''
