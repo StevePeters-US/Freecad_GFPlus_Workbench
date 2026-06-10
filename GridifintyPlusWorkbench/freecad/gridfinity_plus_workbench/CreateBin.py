@@ -40,7 +40,7 @@ class CreateBin:
             if obj.Name.startswith("ImportedTab_"):
                 doc.removeObject(obj.Name)
         
-        tab_shape = self.load_template_shape(os.path.join(TEMPLATE_DIR, "GF+TabTemplate.FCStd"))
+        tab_shape = self.load_template_shape(os.path.join(TEMPLATE_DIR, "GF+TabTemplate.FCStd"), body_label="Tab Corner")
         blank_shape = self.load_template_shape(os.path.join(TEMPLATE_DIR, "GF+BlankTemplate.FCStd"))
         
         for x in range(NumX):
@@ -58,9 +58,15 @@ class CreateBin:
             view_object = new_connector_body.ViewObject
             view_object.ShapeColor = (0.8, 0.0, 0.75)
 
-    def load_template_shape(self, filepath, feature_name=None):
+    def load_template_shape(self, filepath, feature_name=None, body_label=None):
         doc = FreeCAD.open(filepath)
-        feature = doc.getObject(feature_name) if feature_name else self.find_last_feature(doc)
+        if body_label:
+            body = next((obj for obj in doc.Objects if obj.Label == body_label), None)
+            feature = body.Tip if body else self.find_last_feature(doc)
+        elif feature_name:
+            feature = doc.getObject(feature_name)
+        else:
+            feature = self.find_last_feature(doc)
         shape = feature.Shape.copy()
         FreeCAD.closeDocument(doc.Name)
         return shape
