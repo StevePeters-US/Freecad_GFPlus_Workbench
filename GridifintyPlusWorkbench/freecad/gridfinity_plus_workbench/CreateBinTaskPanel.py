@@ -1,5 +1,6 @@
-import FreeCAD, FreeCADGui, Part, Sketcher
+import FreeCAD
 from PySide import QtGui, QtCore
+
 
 class BinTaskPanel:
     def __init__(self, command):
@@ -7,7 +8,6 @@ class BinTaskPanel:
         self.form = QtGui.QWidget()
         self.layout = QtGui.QVBoxLayout()
 
-        # NumX range input
         self.labelNumXRange = QtGui.QLabel("NumX Range:")
         self.layout.addWidget(self.labelNumXRange)
         self.numXMinInput = QtGui.QSpinBox()
@@ -19,7 +19,6 @@ class BinTaskPanel:
         self.numXMaxInput.setValue(1)
         self.layout.addWidget(self.numXMaxInput)
 
-        # NumY range input
         self.labelNumYRange = QtGui.QLabel("NumY Range:")
         self.layout.addWidget(self.labelNumYRange)
         self.numYMinInput = QtGui.QSpinBox()
@@ -31,13 +30,11 @@ class BinTaskPanel:
         self.numYMaxInput.setValue(1)
         self.layout.addWidget(self.numYMaxInput)
 
-        # Connect value changed signals
         self.numXMinInput.valueChanged.connect(self.onXMinValueChanged)
         self.numXMaxInput.valueChanged.connect(self.onXMaxValueChanged)
         self.numYMinInput.valueChanged.connect(self.onYMinValueChanged)
         self.numYMaxInput.valueChanged.connect(self.onYMaxValueChanged)
 
-        # Enum input
         self.labelEnum = QtGui.QLabel("Selection:")
         self.layout.addWidget(self.labelEnum)
         self.enumInput = QtGui.QComboBox()
@@ -51,14 +48,12 @@ class BinTaskPanel:
         self.heightInput.setText("0.75, 1.25")
         self.layout.addWidget(self.heightInput)
 
-        # Create button
         self.createButton = QtGui.QPushButton("Create Bin")
         self.createButton.clicked.connect(self.CreateBin)
         self.layout.addWidget(self.createButton)
 
         self.form.setLayout(self.layout)
 
-    
     def onXMinValueChanged(self, value):
         if value > self.numXMaxInput.value():
             self.numXMaxInput.setValue(value)
@@ -88,7 +83,6 @@ class BinTaskPanel:
         doc = FreeCAD.ActiveDocument
         if not doc:
             return False
-        
         bin_name = f"GFPlus_Bin_{NumX}x{NumY}x{Height:.2f}_{selection}".replace('.', '_')
         return bin_name in [obj.Name for obj in doc.Objects]
 
@@ -99,31 +93,14 @@ class BinTaskPanel:
         numYMax = self.numYMaxInput.value()
         selection = self.enumInput.currentText()
         heights = self.parse_heights()
-        
+
         if not heights:
             return
-        
+
         for numX in range(numXMin, numXMax + 1):
             for numY in range(numYMin, numYMax + 1):
                 for height in heights:
                     if not self.bin_exists(numX, numY, height, selection):
                         self.command.CreateBin(numX, numY, selection, height)
                     else:
-                        print(f"Bin with dimensions {numX}x{numY}x{height:.2f} and selection '{selection}' already exists. Skipping creation.")
-
-
-class CommandCreateBin:
-    def GetResources(self):
-        return {'Pixmap': 'path/to/icon.svg',
-                'MenuText': 'Create Bin',
-                'ToolTip': 'Create a new bin'}
-
-    def IsActive(self):
-        return FreeCAD.ActiveDocument is not None
-
-    def Activated(self):
-        FreeCADGui.Control.showDialog(BinTaskPanel(self))
-
-FreeCADGui.addCommand('CreateBin', CommandCreateBin())
-
-
+                        FreeCAD.Console.PrintMessage(f"[GFPlus] BinTaskPanel.CreateBin: bin {numX}x{numY}x{height:.2f} '{selection}' already exists, skipping\n")

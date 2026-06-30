@@ -30,17 +30,23 @@ class BulkExport:
         exported = []
         failed = []
         for obj in objects:
-            try:
-                if fmt in ("STL", "Both"):
-                    path = os.path.join(folder, obj.Name + ".stl")
-                    obj.Shape.exportStl(path)
-                if fmt in ("STEP", "Both"):
-                    path = os.path.join(folder, obj.Name + ".step")
-                    Part.export([obj], path)
+            ok = True
+            if fmt in ("STL", "Both"):
+                try:
+                    obj.Shape.exportStl(os.path.join(folder, obj.Name + ".stl"))
+                except Exception as e:
+                    FreeCAD.Console.PrintError(f"[GFPlus] BulkExport: STL export failed for {obj.Name}: {e}\n")
+                    ok = False
+            if fmt in ("STEP", "Both"):
+                try:
+                    Part.export([obj], os.path.join(folder, obj.Name + ".step"))
+                except Exception as e:
+                    FreeCAD.Console.PrintError(f"[GFPlus] BulkExport: STEP export failed for {obj.Name}: {e}\n")
+                    ok = False
+            if ok:
                 exported.append(obj.Name)
-                FreeCAD.Console.PrintMessage(f"BulkExport: exported {obj.Name}\n")
-            except Exception as e:
-                FreeCAD.Console.PrintError(f"BulkExport: failed to export {obj.Name}: {e}\n")
+                FreeCAD.Console.PrintMessage(f"[GFPlus] BulkExport: exported {obj.Name}\n")
+            else:
                 failed.append(obj.Name)
         return exported, failed
 

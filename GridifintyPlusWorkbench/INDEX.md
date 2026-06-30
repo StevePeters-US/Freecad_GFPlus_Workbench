@@ -40,8 +40,7 @@ See `.agents/skills/update_index/SKILL.md` for update rules.
 | `CreateBin` | `CreateBin.py` | 9 |
 | `CreateBaseplate` | `CreateBaseplate.py` | 6 |
 | `BinTaskPanel` | `CreateBinTaskPanel.py` | 4 |
-| `CommandCreateBin` | `CreateBinTaskPanel.py` | 115 |
-| `BaseplateTaskPanel` | `CreateBaseplateTaskPanel.py` | — |
+| `BaseplateTaskPanel` | `CreateBaseplateTaskPanel.py` | 5 |
 | `BulkExport` | `BulkExport.py` | 12 |
 | `BulkExportTaskPanel` | `BulkExportTaskPanel.py` | 9 |
 
@@ -65,11 +64,7 @@ Load these skills when about to perform the indicated work:
 
 ## Known Bugs
 
-| ID | File:Line | Description | Fix hint |
-|----|-----------|-------------|----------|
-| B-001 | `CreateBin.py:130` | `connector_feature` None check uses `print()` not a proper log | Replace with `FreeCAD.Console.PrintWarning` |
-| B-002 | `CreateBinTaskPanel.py:112` | Skip message uses `print()` | Replace with `FreeCAD.Console.PrintMessage` |
-| B-003 | `CreateBaseplate.py:62` | Exception message uses `print()` | Replace with `FreeCAD.Console.PrintError` |
+*No known bugs.*
 
 ---
 

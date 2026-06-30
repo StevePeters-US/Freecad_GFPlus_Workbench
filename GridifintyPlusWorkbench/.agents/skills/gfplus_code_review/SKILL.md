@@ -26,6 +26,8 @@ Load these before reading any source file:
 |-----------|-----------------|
 | **Bin Command** | `CreateBin.py`, `CreateBinTaskPanel.py` |
 | **Baseplate Command** | `CreateBaseplate.py`, `CreateBaseplateTaskPanel.py` |
+| **Layout Bins** | `LayoutBins.py`, `LayoutBinsTaskPanel.py` |
+| **Bulk Export** | `BulkExport.py`, `BulkExportTaskPanel.py` |
 | **Workbench Init** | `init_gui.py` |
 
 ---

@@ -98,6 +98,9 @@ class BulkExportTaskPanel:
             return
 
         doc = FreeCAD.ActiveDocument
+        if not doc:
+            QtGui.QMessageBox.warning(self.form, "No Document", "No active document.")
+            return
         objects = [doc.getObject(n) for n in selected_names if doc.getObject(n)]
         fmt = self.formatCombo.currentText()
 

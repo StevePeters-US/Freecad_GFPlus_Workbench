@@ -1,10 +1,9 @@
 import os
 import FreeCADGui as Gui
 import FreeCAD as App
-from freecad.gridfinity_plus_workbench import CreateBaseplate, CreateBin, LayoutBins, BulkExport
+from freecad.gridfinity_plus_workbench import CreateBaseplate, CreateBin, BulkExport
 
 translate=App.Qt.translate
-QT_TRANSLATE_NOOP=App.Qt.QT_TRANSLATE_NOOP
 
 ICONPATH = os.path.join(os.path.dirname(__file__), "resources//icons//")
 TRANSLATIONSPATH = os.path.join(os.path.dirname(__file__), "resources", "translations")
@@ -35,7 +34,7 @@ class GridifintyPlusWorkbench(Gui.Workbench):
             "Log",
             "Switching to gridfinity_plus_workbench") + "\n")
         
-        self.list = ["CreateBaseplateCommand", "CreateBinCommand", "LayoutBinsCommand", "BulkExportCommand"] # a list of command names created in the line above
+        self.list = ["CreateBaseplateCommand", "CreateBinCommand", "BulkExportCommand"]
         self.appendToolbar("Gridfinity+ tools", self.list) # creates a new toolbar with your commands
         self.appendMenu("Gridfintiy+", self.list) # creates a new menu
 

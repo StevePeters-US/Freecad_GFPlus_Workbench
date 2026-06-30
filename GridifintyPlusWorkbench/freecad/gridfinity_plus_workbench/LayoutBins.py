@@ -67,7 +67,7 @@ class LayoutBins:
             src = doc.getObject(entry['bin_name'])
             if src is None:
                 FreeCAD.Console.PrintWarning(
-                    f"LayoutBins: bin '{entry['bin_name']}' not found, skipping.\n"
+                    f"[GFPlus] LayoutBins: bin '{entry['bin_name']}' not found, skipping.\n"
                 )
                 continue
 

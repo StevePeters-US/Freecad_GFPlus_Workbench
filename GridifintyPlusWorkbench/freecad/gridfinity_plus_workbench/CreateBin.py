@@ -36,7 +36,7 @@ class CreateBin:
     def CreateTabs(self, NumX, NumY, Selection):
         doc = FreeCAD.ActiveDocument or FreeCAD.newDocument("Unnamed")
         
-        for obj in doc.Objects:
+        for obj in list(doc.Objects):
             if obj.Name.startswith("ImportedTab_"):
                 doc.removeObject(obj.Name)
         
@@ -55,20 +55,27 @@ class CreateBin:
         if connector_shape:
             new_connector_body = doc.addObject('Part::Feature', 'ImportedTab_Connector')
             new_connector_body.Shape = connector_shape
-            view_object = new_connector_body.ViewObject
-            view_object.ShapeColor = (0.8, 0.0, 0.75)
+            new_connector_body.ViewObject.ShapeColor = (0.8, 0.0, 0.75)
 
     def load_template_shape(self, filepath, feature_name=None, body_label=None):
         doc = FreeCAD.open(filepath)
-        if body_label:
-            body = next((obj for obj in doc.Objects if obj.Label == body_label), None)
-            feature = body.Tip if body else self.find_last_feature(doc)
-        elif feature_name:
-            feature = doc.getObject(feature_name)
-        else:
-            feature = self.find_last_feature(doc)
-        shape = feature.Shape.copy()
-        FreeCAD.closeDocument(doc.Name)
+        try:
+            if body_label:
+                body = next((obj for obj in doc.Objects if obj.Label == body_label), None)
+                if body is None:
+                    FreeCAD.Console.PrintWarning(
+                        f"[GFPlus] load_template_shape: label '{body_label}' not found in {filepath}, falling back to last feature\n"
+                    )
+                feature = body.Tip if body else self.find_last_feature(doc)
+            elif feature_name:
+                feature = doc.getObject(feature_name)
+            else:
+                feature = self.find_last_feature(doc)
+            if feature is None:
+                raise ValueError(f"[GFPlus] load_template_shape: no suitable feature found in {filepath}")
+            shape = feature.Shape.copy()
+        finally:
+            FreeCAD.closeDocument(doc.Name)
         return shape
 
     @staticmethod
@@ -99,7 +106,7 @@ class CreateBin:
     def create_bin_shape(self, NumX, NumY, Height):
         doc = FreeCAD.ActiveDocument or FreeCAD.newDocument("Unnamed")
         
-        for obj in doc.Objects:
+        for obj in list(doc.Objects):
             if obj.Name.startswith("ImportedBin"):
                 doc.removeObject(obj.Name)
         
@@ -107,45 +114,45 @@ class CreateBin:
         new_bin_body = doc.addObject('Part::Feature', 'ImportedBin')
         new_bin_body.Shape = bin_shape
         new_bin_body.ViewObject.ShapeColor = (0.718, 0.0, 1.0)
-        
+
     def load_bin_template(self, NumX, NumY, Height):
         bin_doc = FreeCAD.open(os.path.join(TEMPLATE_DIR, "GF+BinTemplate.FCStd"))
-        spreadsheet = bin_doc.getObject("Spreadsheet")
-        if spreadsheet:
-            spreadsheet.set("SizeX", str(NumX))
-            spreadsheet.set("SizeY", str(NumY))
-            spreadsheet.set("SizeZ", str(Height))
-            bin_doc.recompute()
-        bin_feature = bin_doc.getObject('Pad')
-
-        shape = bin_feature.Shape.copy()
-        FreeCAD.closeDocument(bin_doc.Name)
+        try:
+            spreadsheet = bin_doc.getObject("Spreadsheet")
+            if spreadsheet:
+                spreadsheet.set("SizeX", str(NumX))
+                spreadsheet.set("SizeY", str(NumY))
+                spreadsheet.set("SizeZ", str(Height))
+                bin_doc.recompute()
+            bin_feature = bin_doc.getObject('Pad')
+            if bin_feature is None:
+                raise ValueError("[GFPlus] load_bin_template: no feature named 'Pad' in bin template")
+            shape = bin_feature.Shape.copy()
+        finally:
+            FreeCAD.closeDocument(bin_doc.Name)
         return shape
-    
+
     def load_connector_shape(self, NumX, NumY):
         connector_doc = FreeCAD.open(os.path.join(TEMPLATE_DIR, "GF+TabConnectorTemplate.FCStd"))
-        
-        spreadsheet = connector_doc.getObject("Spreadsheet")
-        if spreadsheet:
-            spreadsheet.set("SizeX", str(NumX))
-            spreadsheet.set("SizeY", str(NumY))
-            connector_doc.recompute()
-
-        connector_feature = connector_doc.getObject("Pad005")
-        if connector_feature is None:
-            print("No feature named Pad005 found in the connector document.")
-            return None
-
-        connector_shape = connector_feature.Shape.copy()
-        FreeCAD.closeDocument(connector_doc.Name)
+        try:
+            spreadsheet = connector_doc.getObject("Spreadsheet")
+            if spreadsheet:
+                spreadsheet.set("SizeX", str(NumX))
+                spreadsheet.set("SizeY", str(NumY))
+                connector_doc.recompute()
+            connector_feature = connector_doc.getObject("Pad005")
+            if connector_feature is None:
+                FreeCAD.Console.PrintWarning("[GFPlus] load_connector_shape: no feature named Pad005 found in the connector document\n")
+                return None
+            connector_shape = connector_feature.Shape.copy()
+        finally:
+            FreeCAD.closeDocument(connector_doc.Name)
         return connector_shape
 
 
     def perform_fusion(self, NumX, NumY, Height, Selection):
         doc = FreeCAD.ActiveDocument
-        all_objects = doc.Objects
-
-        workbench_objects = [obj for obj in all_objects if obj.Label.startswith('ImportedTab') or obj.Label.startswith('ImportedBin')]
+        workbench_objects = [obj for obj in doc.Objects if obj.Label.startswith('ImportedTab') or obj.Label.startswith('ImportedBin')]
 
         importedbody_connector = None
         for obj in workbench_objects:
@@ -155,37 +162,27 @@ class CreateBin:
                 break
 
         if importedbody_connector is None:
-            print("Debug: No ImportedTab_Connector found")
+            FreeCAD.Console.PrintWarning("[GFPlus] perform_fusion: no ImportedTab_Connector found\n")
             QtGui.QMessageBox.information(None, "Boolean Fusion", "No ImportedTab_Connector found.")
             return
 
         if len(workbench_objects) < 1:
-            print("Debug: Not enough objects to fuse")
+            FreeCAD.Console.PrintWarning("[GFPlus] perform_fusion: not enough objects to fuse\n")
             QtGui.QMessageBox.information(None, "Boolean Fusion", "There should be at least one other object created by the workbench to fuse with ImportedTab_Connector.")
             return
 
-        fused_object = importedbody_connector
-        shapes_for_fusion = [fused_object.Shape]
-
-        for obj in workbench_objects:
-            shapes_for_fusion.append(obj.Shape)
-
-
+        shapes_for_fusion = [importedbody_connector.Shape] + [obj.Shape for obj in workbench_objects]
         compound = Part.makeCompound(shapes_for_fusion)
 
         fusion = doc.addObject("Part::Feature", f"GFPlus_Bin_{NumX}x{NumY}x{Height:.2f}_{Selection}".replace('.', '_'))
-
         fusion.Shape = compound
-
-        view_object = fusion.ViewObject
-        view_object.ShapeColor = (0.0, 0.88, 0.11)  
+        fusion.ViewObject.ShapeColor = (0.0, 0.88, 0.11)
 
         doc.recompute()
 
         for obj in workbench_objects:
             doc.removeObject(obj.Name)
         doc.removeObject(importedbody_connector.Name)
-
 
 
 FreeCADGui.addCommand('CreateBinCommand', CreateBin())

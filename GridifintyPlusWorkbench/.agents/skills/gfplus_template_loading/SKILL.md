@@ -13,6 +13,9 @@ shape, and immediately closing the template document.
 
 ## Standard Pattern
 
+Always wrap the body in `try/finally` so `closeDocument` is guaranteed to run even when
+an exception or early `return` occurs mid-function.
+
 ```python
 import FreeCAD
 
@@ -24,22 +27,23 @@ def load_from_template(template_path, params: dict, feature_name: str):
         FreeCAD.Console.PrintError(f"[GFPlus] load_from_template: failed to open {template_path}: {e}\n")
         return None
 
-    spreadsheet = doc.getObject("Spreadsheet")
-    if spreadsheet:
-        for key, value in params.items():
-            spreadsheet.set(key, str(value))
-        doc.recompute()
-    else:
-        FreeCAD.Console.PrintWarning(f"[GFPlus] load_from_template: no Spreadsheet in {template_path}\n")
+    try:
+        spreadsheet = doc.getObject("Spreadsheet")
+        if spreadsheet:
+            for key, value in params.items():
+                spreadsheet.set(key, str(value))
+            doc.recompute()
+        else:
+            FreeCAD.Console.PrintWarning(f"[GFPlus] load_from_template: no Spreadsheet in {template_path}\n")
 
-    feature = doc.getObject(feature_name)
-    if feature is None:
-        FreeCAD.Console.PrintError(f"[GFPlus] load_from_template: no feature '{feature_name}' in {template_path}\n")
+        feature = doc.getObject(feature_name)
+        if feature is None:
+            FreeCAD.Console.PrintError(f"[GFPlus] load_from_template: no feature '{feature_name}' in {template_path}\n")
+            return None
+
+        shape = feature.Shape.copy()   # copy before closing the document
+    finally:
         FreeCAD.closeDocument(doc.Name)
-        return None
-
-    shape = feature.Shape.copy()   # copy before closing the document
-    FreeCAD.closeDocument(doc.Name)
     return shape
 ```
 

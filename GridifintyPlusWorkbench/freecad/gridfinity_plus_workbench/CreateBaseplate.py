@@ -1,5 +1,4 @@
-import FreeCAD, FreeCADGui, Part, Sketcher
-from PySide import QtGui, QtCore
+import FreeCAD, FreeCADGui
 import os
 from freecad.gridfinity_plus_workbench.CreateBaseplateTaskPanel import BaseplateTaskPanel
 
@@ -32,25 +31,26 @@ class CreateBaseplate:
     def CreateBaseplate(self, NumX, NumY):
         doc = self._getOrCreateDocument()
         self._cleanupPreviousBaseplates(doc)
-        
+
         baseplate_doc = self._openBaseplateTemplate()
         if not baseplate_doc:
             return
 
-        self._updateSpreadsheet(baseplate_doc, NumX, NumY)
-        baseplate_feature = self._getBaseplateFeature(baseplate_doc)
-        if not baseplate_feature:
-            return
-
-        self._createNewBaseplateBody(doc, baseplate_feature, NumX, NumY)
-        FreeCAD.closeDocument(baseplate_doc.Name)
+        try:
+            self._updateSpreadsheet(baseplate_doc, NumX, NumY)
+            baseplate_feature = self._getBaseplateFeature(baseplate_doc)
+            if not baseplate_feature:
+                return
+            self._createNewBaseplateBody(doc, baseplate_feature, NumX, NumY)
+        finally:
+            FreeCAD.closeDocument(baseplate_doc.Name)
 
     def _getOrCreateDocument(self):
         doc = FreeCAD.ActiveDocument
         return doc if doc else FreeCAD.newDocument("Unnamed")
 
     def _cleanupPreviousBaseplates(self, doc):
-        for obj in doc.Objects:
+        for obj in list(doc.Objects):
             if obj.Name.startswith("ImportedBaseplate"):
                 doc.removeObject(obj.Name)
 
@@ -59,7 +59,7 @@ class CreateBaseplate:
         try:
             return FreeCAD.open(template_path)
         except Exception as e:
-            print(f"Error opening template: {e}")
+            FreeCAD.Console.PrintError(f"[GFPlus] CreateBaseplate._openBaseplateTemplate: {e}\n")
             return None
 
     def _updateSpreadsheet(self, doc, NumX, NumY):
@@ -69,19 +69,18 @@ class CreateBaseplate:
             spreadsheet.set("SizeY", str(NumY))
             doc.recompute()
         else:
-            print("Spreadsheet not found in the template.")
+            FreeCAD.Console.PrintWarning("[GFPlus] CreateBaseplate._updateSpreadsheet: no Spreadsheet in template\n")
 
     def _getBaseplateFeature(self, doc):
         feature = doc.getObject(self.FEATURE_NAME)
         if not feature:
-            print(f"No feature named {self.FEATURE_NAME} found in the baseplate document.")
+            FreeCAD.Console.PrintError(f"[GFPlus] CreateBaseplate._getBaseplateFeature: no feature named '{self.FEATURE_NAME}' in baseplate document\n")
         return feature
 
     def _createNewBaseplateBody(self, doc, baseplate_feature, NumX, NumY):
         new_baseplate_body = doc.addObject('Part::Feature', f'GFPlus_Baseplate_{NumX}_{NumY}')
         new_baseplate_body.Shape = baseplate_feature.Shape
-        view_object = new_baseplate_body.ViewObject
-        view_object.ShapeColor = (0.25, 0.25, 0.25)
+        new_baseplate_body.ViewObject.ShapeColor = (0.25, 0.25, 0.25)
         doc.recompute()
 
 FreeCADGui.addCommand("CreateBaseplateCommand", CreateBaseplate())

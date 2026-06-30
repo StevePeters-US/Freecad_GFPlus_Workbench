@@ -138,7 +138,6 @@ class BaseplateScene(QtGui.QGraphicsScene):
         return self._color_map[bin_name]
 
     def can_place(self, exclude_item, gx, gy):
-        """Return True if exclude_item can be placed at (gx, gy) without overlapping others."""
         numX, numY = exclude_item.numX, exclude_item.numY
         cells = {(gx + dx, gy + dy) for dx in range(numX) for dy in range(numY)}
         for item in self.bin_items:
@@ -151,7 +150,6 @@ class BaseplateScene(QtGui.QGraphicsScene):
         return True
 
     def add_bin(self, bin_name, numX, numY, gx, gy):
-        """Place a new bin. Returns False if out-of-bounds or overlapping."""
         if gx < 0 or gy < 0 or gx + numX > self.baseplate_x or gy + numY > self.baseplate_y:
             return False
         cells = {(gx + dx, gy + dy) for dx in range(numX) for dy in range(numY)}
