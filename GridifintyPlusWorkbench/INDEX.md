@@ -15,6 +15,8 @@ See `.agents/skills/update_index/SKILL.md` for update rules.
 | `freecad/gridfinity_plus_workbench/CreateBinTaskPanel.py` | Qt task panel for bin creation; batch range inputs |
 | `freecad/gridfinity_plus_workbench/CreateBaseplate.py` | `CreateBaseplate` command; opens template, writes spreadsheet, extracts shape |
 | `freecad/gridfinity_plus_workbench/CreateBaseplateTaskPanel.py` | Qt task panel for baseplate creation |
+| `freecad/gridfinity_plus_workbench/BulkExport.py` | `BulkExport` command; exports selected GFPlus objects to STL/STEP |
+| `freecad/gridfinity_plus_workbench/BulkExportTaskPanel.py` | Qt task panel for bulk export; folder picker, object checklist, format selection |
 | `freecad/gridfinity_plus_workbench/__init__.py` | Package init |
 | `freecad/gridfinity_plus_workbench/version.py` | Version string |
 
@@ -40,6 +42,8 @@ See `.agents/skills/update_index/SKILL.md` for update rules.
 | `BinTaskPanel` | `CreateBinTaskPanel.py` | 4 |
 | `CommandCreateBin` | `CreateBinTaskPanel.py` | 115 |
 | `BaseplateTaskPanel` | `CreateBaseplateTaskPanel.py` | — |
+| `BulkExport` | `BulkExport.py` | 12 |
+| `BulkExportTaskPanel` | `BulkExportTaskPanel.py` | 9 |
 
 ---
 
