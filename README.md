@@ -1,6 +1,7 @@
 # Gridfinity+ Workbench for FreeCAD (GF+)
 
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?style=flat&logo=github-sponsors)](https://github.com/sponsors/StevePeters-US)
+[![Support me on Patreon](https://img.shields.io/badge/Support%20me-Patreon-f96854?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/cw/angrysasquatch)
 [![FreeCAD Compatibility](https://img.shields.io/badge/FreeCAD-1.0_RC2_/_0.21_/_0.20-blue.svg?logo=freecad&logoColor=white)](https://www.freecad.org/)
 [![Printables Model](https://img.shields.io/badge/Printables-Model_765609-orange.svg?style=flat&logo=3d-printing)](https://www.printables.com/model/765609-gridfinity)
 [![Thingiverse Model](https://img.shields.io/badge/Thingiverse-Model_6823865-2496ed.svg?logo=thingiverse&logoColor=white)](https://www.thingiverse.com/thing:6823865/comments#comment-7541438)
