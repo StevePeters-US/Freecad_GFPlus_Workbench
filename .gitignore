@@ -3,3 +3,5 @@
 *.FCBak
 *.zip
 Bins/
+__pycache__/
+*.pyc
