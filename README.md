@@ -1,6 +1,5 @@
 # Gridfinity+ Workbench for FreeCAD (GF+)
 
-[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-ea4aaa?style=flat&logo=github-sponsors)](https://github.com/sponsors/StevePeters-US)
 [![Support me on Patreon](https://img.shields.io/badge/Support%20me-Patreon-f96854?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/cw/angrysasquatch)
 [![FreeCAD Compatibility](https://img.shields.io/badge/FreeCAD-1.0_RC2_/_0.21_/_0.20-blue.svg?logo=freecad&logoColor=white)](https://www.freecad.org/)
 [![Printables Model](https://img.shields.io/badge/Printables-Model_765609-orange.svg?style=flat&logo=3d-printing)](https://www.printables.com/model/765609-gridfinity)
@@ -69,3 +68,9 @@ pip install .
 ## ⚖️ License
 
 This project is licensed under **CC BY-NC-SA 4.0** (Attribution-NonCommercial-ShareAlike). See the [LICENSE](LICENSE) file for details.
+
+## ❤️ Support This Project
+
+If Gridfinity+ has been useful to you, consider supporting continued development:
+
+### [Support me on Patreon](https://www.patreon.com/cw/angrysasquatch)
